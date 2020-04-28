@@ -2,9 +2,7 @@ const canvas = document.getElementById("jsCanvas");
 const ctx = canvas.getContext("2d"); //context 캔버스의 픽셀을 다룰것임
 //default
 const colors = document.getElementsByClassName("jsColor");
-
-canvas.width = 700; //픽셀을 다루는 캔버스의 크기 지정
-canvas.height = 700;
+const range = document.getElementById("jsRange");
 
 ctx.strokeStyle = "#2c2c2c";
 ctx.lineWidth = "2.5"; //초기화
@@ -39,6 +37,11 @@ function handleColorClick(event) {
   ctx.strokeStyle = color;
 }
 
+function handleRangeChange() {
+  const size = event.target.value;
+  ctx.lineWidth = size;
+}
+
 if (canvas) {
   canvas.addEventListener("mousemove", onMouseMove); //마우스 움직임 감지
   canvas.addEventListener("mousedown", startPainting); //클릭했을 때를 감지
@@ -47,8 +50,8 @@ if (canvas) {
   //canvas.addEventListener("mouseenter", startPainting); 들어갈때마다 그려져서 실패
 }
 
-/*
-while(canvas.addEventListener("mousedown", true){
+/* 
+while(canvas.addEventListener("mousedown", true)&({
     canvas.addEventListener("mouseenter", startPainting);
 }
 */
@@ -57,3 +60,7 @@ while(canvas.addEventListener("mousedown", true){
 Array.from(colors).forEach((color) =>
   color.addEventListener("click", handleColorClick)
 );
+
+if (range) {
+  range.addEventListener("input", handleRangeChange);
+}
