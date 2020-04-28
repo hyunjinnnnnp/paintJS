@@ -3,11 +3,16 @@ const ctx = canvas.getContext("2d"); //context 캔버스의 픽셀을 다룰것�
 //default
 const colors = document.getElementsByClassName("jsColor");
 const range = document.getElementById("jsRange");
+const mode = document.getElementById("jsMode");
+const INITIAL_COLOR = "#2c2c2c";
+const CANVAS_SIZE = 600;
 
-ctx.strokeStyle = "#2c2c2c";
+ctx.strokeStyle = INITIAL_COLOR;
+ctx.fillStyle = INITIAL_COLOR;
 ctx.lineWidth = "2.5"; //초기화
 
 let painting = false; //디폴트가 폴스
+let filling = false;
 
 function stopPainting() {
   painting = false;
@@ -18,7 +23,8 @@ function startPainting() {
 
 function onMouseMove(event) {
   const x = event.offsetX;
-  const y = event.offsetY; //console!! 전체화면이랑 다름. 캔버스 안에서의 좌표만 받아올 것임
+  const y = event.offsetY;
+  //console!! 전체화면이랑 다름. 캔버스 안에서의 좌표만 받아올 것임
 
   if (!painting) {
     ctx.beginPath();
@@ -35,26 +41,43 @@ function onMouseMove(event) {
 function handleColorClick(event) {
   const color = event.target.style.backgroundColor;
   ctx.strokeStyle = color;
+  ctx.fillStyle = color;
 }
 
-function handleRangeChange() {
+function handleRangeChange(event) {
   const size = event.target.value;
   ctx.lineWidth = size;
 }
 
+function handleModeClick() {
+  if (filling === true) {
+    filling = false;
+    mode.innerText = "Fill";
+  } else {
+    filling = true;
+    mode.innerText = "Paint";
+  }
+}
+function handleCanvasClick() {
+  if (filling) {
+    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    painting = true;
+    mode.innerText = "Fill"; //한번 칠한 후에 다시 그리기모드로 변경
+    filling = false;
+  }
+}
+
 if (canvas) {
-  canvas.addEventListener("mousemove", onMouseMove); //마우스 움직임 감지
-  canvas.addEventListener("mousedown", startPainting); //클릭했을 때를 감지
+  canvas.addEventListener("mousemove", onMouseMove);
+  canvas.addEventListener("mousedown", startPainting);
   canvas.addEventListener("mouseup", stopPainting);
   canvas.addEventListener("mouseleave", stopPainting);
   //canvas.addEventListener("mouseenter", startPainting); 들어갈때마다 그려져서 실패
+  //캔버스 밖으로 나갔다가들어오면 선이 끊기는 이유...
+  //clientX,Y 클릭한 상태로 들어오면 선이 이어지게 할 수 있나?
+  //
+  canvas.addEventListener("click", handleCanvasClick);
 }
-
-/* 
-while(canvas.addEventListener("mousedown", true)&({
-    canvas.addEventListener("mouseenter", startPainting);
-}
-*/
 
 //console.log(Array.from(colors)); //Array.from(objec) 오브젝트로부터 배열을만들어
 Array.from(colors).forEach((color) =>
@@ -63,4 +86,8 @@ Array.from(colors).forEach((color) =>
 
 if (range) {
   range.addEventListener("input", handleRangeChange);
+}
+
+if (mode) {
+  mode.addEventListener("click", handleModeClick); //모드 버튼이클릭됐을 때 제어하는 구문
 }
