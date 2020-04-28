@@ -6,6 +6,10 @@ const range = document.getElementById("jsRange");
 const mode = document.getElementById("jsMode");
 const INITIAL_COLOR = "#2c2c2c";
 const CANVAS_SIZE = 600;
+const saveBtn = document.getElementById("jsSave");
+
+ctx.fillStyle = "white"; //저장했을 때 투명배경이 아니게끔
+ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
 ctx.strokeStyle = INITIAL_COLOR;
 ctx.fillStyle = INITIAL_COLOR;
@@ -67,6 +71,18 @@ function handleCanvasClick() {
   }
 }
 
+function handleCM(event) {
+  event.preventDefault();
+} //우클릭방지
+
+function handleSaveClick() {
+  const image = canvas.toDataURL();
+  const link = document.createElement("a");
+  link.href = image;
+  link.download = "PaintJS[😎]";
+  link.click();
+}
+
 if (canvas) {
   canvas.addEventListener("mousemove", onMouseMove);
   canvas.addEventListener("mousedown", startPainting);
@@ -75,8 +91,8 @@ if (canvas) {
   //canvas.addEventListener("mouseenter", startPainting); 들어갈때마다 그려져서 실패
   //캔버스 밖으로 나갔다가들어오면 선이 끊기는 이유...
   //clientX,Y 클릭한 상태로 들어오면 선이 이어지게 할 수 있나?
-  //
   canvas.addEventListener("click", handleCanvasClick);
+  canvas.addEventListener("contextmenu", handleCM);
 }
 
 //console.log(Array.from(colors)); //Array.from(objec) 오브젝트로부터 배열을만들어
@@ -90,4 +106,8 @@ if (range) {
 
 if (mode) {
   mode.addEventListener("click", handleModeClick); //모드 버튼이클릭됐을 때 제어하는 구문
+}
+
+if (saveBtn) {
+  saveBtn.addEventListener("click", handleSaveClick);
 }
